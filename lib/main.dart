@@ -25,14 +25,22 @@ class HomeCalendarPage extends StatefulWidget {
 class _HomeCalendarPageState extends State<HomeCalendarPage> {
   CalendarController _controller = CalendarController();
 
+  Map<DateTime, List<dynamic>> _events = {};
+  List<dynamic> _selectedEvents = [];
+
   @override
   void initState() {
     super.initState();
+
+    print("ejecuto");
     //_controller = CalendarController();
   }
 
   @override
   Widget build(BuildContext context) {
+    _events[DateTime(2022, 8, 3, 0)] = ["a", "aaa", "a"];
+    _events[DateTime(2022, 8, 23, 0)] = [ "aaa", "a"];
+    _events[DateTime(2022, 8, 6, 0)] = ["a"];
     return Scaffold(
       appBar: AppBar(
         title: Text('Croni'),
@@ -42,14 +50,16 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TableCalendar(
+            events: _events,
             initialCalendarFormat: CalendarFormat.month,
             calendarStyle: CalendarStyle(
-                todayColor: Colors.blue,
+                canEventMarkersOverflow: false,
+                todayColor: Colors.transparent,
                 selectedColor: Theme.of(context).primaryColor,
                 todayStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 22.0,
-                    color: Colors.white)),
+                    color: Colors.black)),
             headerStyle: HeaderStyle(
               centerHeaderTitle: true,
               formatButtonDecoration: BoxDecoration(
@@ -64,6 +74,40 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
               print(date.toUtc());
             },
             builders: CalendarBuilders(
+              markersBuilder: (context, date, events, holidays) {
+                final lista = <Widget>[];
+                if (events.isEmpty) return lista;
+                print("ejecuto---");
+                print("hay $events.lenght() eventos");
+                lista.add(ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount: events.length,
+                    itemBuilder: (context, int index) {
+                      if(index==null)
+                        return Container();
+                      return Container(
+                        margin: const EdgeInsets.only(top: 1),
+                        padding: const EdgeInsets.all(1),
+                        child: Container(
+                           height: 5,
+                          width: 35,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.rectangle, color: Colors.blue),
+                        ),
+                      );
+                    }));
+                return lista;
+                /*if (events.isNotEmpty) {
+                  lista.add(
+                    Positioned(
+                      bottom: 1,
+                      child: _buildEventsMarker(date, events),
+                    ),
+                  );
+                }
+                return lista;*/
+              },
               selectedDayBuilder: (context, date, events) => Container(
                   margin: const EdgeInsets.all(5.0),
                   alignment: Alignment.center,
@@ -78,11 +122,14 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                   margin: const EdgeInsets.all(5.0),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      color: Colors.blue,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(8.0)),
                   child: Text(
                     date.day.toString(),
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0,
+                        color: Colors.black),
                   )),
             ),
             calendarController: _controller,
@@ -93,21 +140,23 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: const [
-                    Padding(
-                        padding: EdgeInsets.symmetric(vertical:4,horizontal: 8),
-                        child: CroniSlabStatelessWidget(
-                            bckgcolor: Colors.blueAccent,
-                            eventName: "Bañito",
-                            eventTypeName: "Surf",
-                            emoji: "🏄🏽")),
-                    Padding(
-                        padding: EdgeInsets.symmetric(vertical:4,horizontal: 8),
-                        child: CroniSlabStatelessWidget(
-                            bckgcolor: Colors.pink,
-                            eventName: "Rango",
-                            eventTypeName: "Pelis",
-                            emoji: "📽")),
-                  ]))),
+                        Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            child: CroniSlabStatelessWidget(
+                                bckgcolor: Colors.blueAccent,
+                                eventName: "Bañito",
+                                eventTypeName: "Surf",
+                                emoji: "🏄🏽")),
+                        Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            child: CroniSlabStatelessWidget(
+                                bckgcolor: Colors.pink,
+                                eventName: "Rango",
+                                eventTypeName: "Pelis",
+                                emoji: "📽")),
+                      ]))),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Align(
@@ -128,6 +177,18 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
           ),
           //Container(height: 10, color: Colors.white),
         ],
+      ),
+    );
+  }
+
+  Widget _buildEventsMarker(DateTime date, List events) {
+    return Container(
+      width: 25.0,
+      height: 2.5,
+      decoration: const BoxDecoration(
+        color: Colors.blue,
+        shape: BoxShape.rectangle,
+        borderRadius: null,
       ),
     );
   }
