@@ -4,12 +4,11 @@ import 'package:table_calendar/table_calendar.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor:Color.fromRGBO(0, 123, 103, 1),
+        primaryColor: Color.fromRGBO(0, 123, 103, 1),
       ),
       home: HomeCalendarPage(),
     );
@@ -35,60 +34,78 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Croni'),
-        backgroundColor:  Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TableCalendar(
-              initialCalendarFormat: CalendarFormat.month,
-              calendarStyle: CalendarStyle(
-                  todayColor: Colors.blue,
-                  selectedColor: Theme.of(context).primaryColor,
-                  todayStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22.0,
-                      color: Colors.white)),
-              headerStyle: HeaderStyle(
-                centerHeaderTitle: true,
-                formatButtonDecoration: BoxDecoration(
-                  color: Colors.blueGrey,
-                  borderRadius: BorderRadius.circular(22.0),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          TableCalendar(
+            initialCalendarFormat: CalendarFormat.month,
+            calendarStyle: CalendarStyle(
+                todayColor: Colors.blue,
+                selectedColor: Theme.of(context).primaryColor,
+                todayStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22.0,
+                    color: Colors.white)),
+            headerStyle: HeaderStyle(
+              centerHeaderTitle: true,
+              formatButtonDecoration: BoxDecoration(
+                color: Colors.blueGrey,
+                borderRadius: BorderRadius.circular(22.0),
+              ),
+              formatButtonTextStyle: TextStyle(color: Colors.white),
+              formatButtonShowsNext: false,
+            ),
+            startingDayOfWeek: StartingDayOfWeek.monday,
+            onDaySelected: (date, events, _) {
+              print(date.toUtc());
+            },
+            builders: CalendarBuilders(
+              selectedDayBuilder: (context, date, events) => Container(
+                  margin: const EdgeInsets.all(5.0),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(8.0)),
+                  child: Text(
+                    date.day.toString(),
+                    style: TextStyle(color: Colors.white),
+                  )),
+              todayDayBuilder: (context, date, events) => Container(
+                  margin: const EdgeInsets.all(5.0),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(8.0)),
+                  child: Text(
+                    date.day.toString(),
+                    style: TextStyle(color: Colors.white),
+                  )),
+            ),
+            calendarController: _controller,
+          ),
+          Expanded(child: Container(color: Colors.transparent)),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+              alignment: Alignment.center,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  onSurface: Colors.grey,
+                  minimumSize: const Size.fromHeight(50),
                 ),
-                formatButtonTextStyle: TextStyle(color: Colors.white),
-                formatButtonShowsNext: false,
+                child: Text(
+                  "+",
+                  style: TextStyle(
+                      fontSize: 20, color: Theme.of(context).primaryColor),
+                ),
+                onPressed: null,
               ),
-              startingDayOfWeek: StartingDayOfWeek.monday,
-              onDaySelected: (date, events, _) {
-                print(date.toUtc());
-              },
-              builders: CalendarBuilders(
-                selectedDayBuilder: (context, date, events) => Container(
-                    margin: const EdgeInsets.all(5.0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(8.0)),
-                    child: Text(
-                      date.day.toString(),
-                      style: TextStyle(color: Colors.white),
-                    )),
-                todayDayBuilder: (context, date, events) => Container(
-                    margin: const EdgeInsets.all(5.0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8.0)),
-                    child: Text(
-                      date.day.toString(),
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ),
-              calendarController: _controller,
-            )
-          ],
-        ),
+            ),
+          ),
+          //Container(height: 10, color: Colors.white),
+        ],
       ),
     );
   }
