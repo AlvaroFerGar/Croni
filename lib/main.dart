@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import 'cronislab.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -85,7 +87,27 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
             ),
             calendarController: _controller,
           ),
-          Expanded(child: Container(color: Colors.transparent)),
+          Expanded(
+              child: Container(
+                  color: Colors.transparent,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: const [
+                    Padding(
+                        padding: EdgeInsets.symmetric(vertical:4,horizontal: 8),
+                        child: CroniSlabStatelessWidget(
+                            bckgcolor: Colors.blueAccent,
+                            eventName: "Bañito",
+                            eventTypeName: "Surf",
+                            emoji: "🏄🏽")),
+                    Padding(
+                        padding: EdgeInsets.symmetric(vertical:4,horizontal: 8),
+                        child: CroniSlabStatelessWidget(
+                            bckgcolor: Colors.pink,
+                            eventName: "Rango",
+                            eventTypeName: "Pelis",
+                            emoji: "📽")),
+                  ]))),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Align(
