@@ -99,7 +99,10 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                           height: 5,
                           width: 35,
                           decoration: BoxDecoration(
-                              shape: BoxShape.rectangle, color: Colors.blue),
+                              shape: BoxShape.rectangle,
+                              color: Colors.blue,
+                              backgroundBlendMode: BlendMode.darken
+                          ),
                         ),
                       );
                     }));
@@ -176,6 +179,8 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
   Widget _buildEventsMarker(DateTime date, List events) {
     return Container(
+      //Ojo. No se usa
+      //TODO Crear una clase aparte como con los slabs
       width: 25.0,
       height: 2.5,
       decoration: const BoxDecoration(
