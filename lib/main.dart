@@ -27,20 +27,24 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
   Map<DateTime, List<dynamic>> _events = {};
   List<dynamic> _selectedEvents = [];
+  DateTime _selected_day=DateTime.now();
+  List<Widget> _cronislabs=[];
 
   @override
   void initState() {
     super.initState();
 
-    print("ejecuto");
+    print("initState");
     //_controller = CalendarController();
   }
 
   @override
   Widget build(BuildContext context) {
-    _events[DateTime(2022, 8, 3, 0)] = ["a", "aaa", "a"];
+    print("build");
+
+   /* _events[DateTime(2022, 8, 3, 0)] = ["a", "aaa", "a"];
     _events[DateTime(2022, 8, 23, 0)] = [ "aaa", "a"];
-    _events[DateTime(2022, 8, 6, 0)] = ["a"];
+    _events[DateTime(2022, 8, 6, 0)] = ["a"];*/
     return Scaffold(
       appBar: AppBar(
         title: Text('Croni'),
@@ -71,14 +75,17 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
             ),
             startingDayOfWeek: StartingDayOfWeek.monday,
             onDaySelected: (date, events, _) {
+              print("seleccionado el dia:");
               print(date.toUtc());
+              _selected_day=date;
+              _onUpdateCroniSlabs(context);
             },
             builders: CalendarBuilders(
               markersBuilder: (context, date, events, holidays) {
                 final lista = <Widget>[];
                 if (events.isEmpty) return lista;
-                print("ejecuto---");
-                print("hay $events.lenght() eventos");
+                //print("ejecuto markersBuilder");
+                //print("hay $events.lenght() eventos en el día"+date.toString());
                 lista.add(ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
@@ -139,24 +146,8 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                   color: Colors.transparent,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: const [
-                        Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            child: CroniSlabStatelessWidget(
-                                bckgcolor: Colors.blueAccent,
-                                eventName: "Bañito",
-                                eventTypeName: "Surf",
-                                emoji: "🏄🏽")),
-                        Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            child: CroniSlabStatelessWidget(
-                                bckgcolor: Colors.pink,
-                                eventName: "Rango",
-                                eventTypeName: "Pelis",
-                                emoji: "📽")),
-                      ]))),
+                      children:   _cronislabs,
+                      ))),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Align(
@@ -171,7 +162,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                   style: TextStyle(
                       fontSize: 20, color: Theme.of(context).primaryColor),
                 ),
-                onPressed: null,
+                onPressed: ()=>_onPressedNewCroniEvent(context),
               ),
             ),
           ),
@@ -191,5 +182,49 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         borderRadius: null,
       ),
     );
+  }
+
+  void _onPressedNewCroniEvent(BuildContext context)
+  {
+    print("_onPressedNewCroniEvent  "+_selected_day.toString());
+    if(_events[_selected_day]!=null)
+      _events[_selected_day]?.add("b");
+    if(_events[_selected_day]==null)
+      _events[_selected_day]=["a"];
+
+    _onUpdateCroniSlabs(context);
+    //print(_events);
+    //_events.clear();
+  }
+
+  void _onUpdateCroniSlabs (BuildContext context)
+  {
+
+    _cronislabs.clear();
+    print("eventos en el dia seleccionado "+_selected_day.toString());
+    print(_getEventsForDay(_selected_day));
+    for(String event in  _getEventsForDay(_selected_day))
+      {
+        print("eventos en el dia seleccionado");
+
+        _cronislabs.add(Padding(
+            padding: EdgeInsets.symmetric(
+                vertical: 4, horizontal: 8),
+            child: CroniSlabStatelessWidget(
+                bckgcolor: Colors.blueAccent,
+                eventName: event,
+                eventTypeName: "Surf",
+                emoji: "🏄🏽")));
+      }
+    setState(() {
+
+    });
+  }
+
+  List<dynamic> _getEventsForDay(DateTime day) {
+    print("_getEventsForDay");
+    print(_events[day]);
+    print("_getEventsForDay");
+    return _events[day] ?? [];
   }
 }
