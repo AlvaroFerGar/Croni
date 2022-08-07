@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'cronislab.dart';
+import 'cronieventform.dart';
 
 void main() => runApp(MyApp());
 
@@ -101,8 +102,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                           decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
                               color: Colors.blue,
-                              backgroundBlendMode: BlendMode.darken
-                          ),
+                              backgroundBlendMode: BlendMode.darken),
                         ),
                       );
                     }));
@@ -197,6 +197,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     if (_events[_selected_day] == null) _events[_selected_day] = ["a"];
 
     _onUpdateCroniSlabs(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const CroniEventForm()));
     //print(_events);
     //_events.clear();
   }
