@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 
 import 'cronislab.dart';
 import 'cronieventform.dart';
+import 'cronitypeform.dart';
 
 void main() => runApp(MyApp());
 
@@ -68,9 +69,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
               style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all(Colors.transparent)),
-              onPressed: () {
-                print("pressed new");
-              },
+              onPressed: () => _onPressedNewCroniType(context),
               icon: Icon(
                 Icons.new_label_rounded,
                 size: 16.0,
@@ -90,41 +89,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
               style: ButtonStyle(
                   backgroundColor:
                       MaterialStateProperty.all(Colors.transparent)),
-              onPressed: () {
-                print("pressed clear");
-
-                // set up the AlertDialog
-                Widget launchButton1 = TextButton(
-                  child: Text("Kill them!"),
-                  onPressed: () {
-                    print("killing events");
-                    _events.clear();
-                    Navigator.pop(context);
-                  },
-                );
-                Widget launchButton2 = TextButton(
-                  child: Text("Oh my god, no!"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                );
-                AlertDialog alert = AlertDialog(
-                  title: Text("Warning!"),
-                  content: Text(
-                      "Doing this will delete\nALL your Cronis!!!.\nIs this what you intend to do?"),
-                  actions: [
-                    launchButton1,
-                    launchButton2,
-                  ],
-                );
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return alert;
-                  },
-                );
-                setState(() {});
-              },
+              onPressed: () => _onClearAllEvents(context),
               icon: Icon(
                 Icons.delete_forever_rounded,
                 size: 16.0,
@@ -281,6 +246,52 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         borderRadius: null,
       ),
     );
+  }
+
+  Future<void> _onClearAllEvents(BuildContext context) async {
+    print("pressed clear");
+
+    // set up the AlertDialog
+    Widget launchButton1 = TextButton(
+      child: Text("Kill them!"),
+      onPressed: () {
+        print("killing events");
+        _events.clear();
+        Navigator.pop(context);
+      },
+    );
+    Widget launchButton2 = TextButton(
+      child: Text("Oh my god, no!"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text("Warning!"),
+      content: Text(
+          "Doing this will delete\nALL your Cronis!!!.\nIs this what you intend to do?"),
+      actions: [
+        launchButton1,
+        launchButton2,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+    setState(() {});
+  }
+
+
+  Future<void> _onPressedNewCroniType(BuildContext context) async {
+    print("_onPressedNewCroniEvent  " + _selected_day.toString());
+    final result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CroniTypeForm()));
+    print(result);
+
+    return;
   }
 
   Future<void> _onPressedNewCroniEvent(BuildContext context) async {
