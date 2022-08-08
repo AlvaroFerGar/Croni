@@ -191,14 +191,19 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     );
   }
 
-  void _onPressedNewCroniEvent(BuildContext context) {
+  Future<void> _onPressedNewCroniEvent(BuildContext context) async {
     print("_onPressedNewCroniEvent  " + _selected_day.toString());
-    if (_events[_selected_day] != null) _events[_selected_day]?.add("b");
-    if (_events[_selected_day] == null) _events[_selected_day] = ["a"];
+    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => CroniEventForm()));
+    print(result);
+
+    if(result==null)
+      return;
+
+    if (_events[_selected_day] != null) _events[_selected_day]?.add(result[1]);
+    if (_events[_selected_day] == null) _events[_selected_day] = [result[1]];
 
     _onUpdateCroniSlabs(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const CroniEventForm()));
-    //print(_events);
+
     //_events.clear();
   }
 
