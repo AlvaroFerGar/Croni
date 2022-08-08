@@ -51,6 +51,98 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         title: Text('Croni'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+                accountName: Text(
+                  "Croni",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 40,
+                  ),
+                ),
+                accountEmail: Text(""),
+                decoration: BoxDecoration(color: Colors.teal)),
+            TextButton.icon(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent)),
+              onPressed: () {
+                print("pressed new");
+              },
+              icon: Icon(
+                Icons.new_label_rounded,
+                size: 16.0,
+              ),
+              label: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Create new Crony type",
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
+            TextButton.icon(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent)),
+              onPressed: () {
+                print("pressed clear");
+
+                // set up the AlertDialog
+                Widget launchButton1 = TextButton(
+                  child: Text("Kill them!"),
+                  onPressed: () {
+                    print("killing events");
+                    _events.clear();
+                    Navigator.pop(context);
+                  },
+                );
+                Widget launchButton2 = TextButton(
+                  child: Text("Oh my god, no!"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                );
+                AlertDialog alert = AlertDialog(
+                  title: Text("Warning!"),
+                  content: Text(
+                      "Doing this will delete\nALL your Cronis!!!.\nIs this what you intend to do?"),
+                  actions: [
+                    launchButton1,
+                    launchButton2,
+                  ],
+                );
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alert;
+                  },
+                );
+                setState(() {});
+              },
+              icon: Icon(
+                Icons.delete_forever_rounded,
+                size: 16.0,
+              ),
+              label: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Clear all events",
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -193,11 +285,11 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
   Future<void> _onPressedNewCroniEvent(BuildContext context) async {
     print("_onPressedNewCroniEvent  " + _selected_day.toString());
-    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => CroniEventForm()));
+    final result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CroniEventForm()));
     print(result);
 
-    if(result==null)
-      return;
+    if (result == null) return;
 
     if (_events[_selected_day] != null) _events[_selected_day]?.add(result[1]);
     if (_events[_selected_day] == null) _events[_selected_day] = [result[1]];
