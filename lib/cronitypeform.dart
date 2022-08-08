@@ -1,6 +1,6 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:emoji_keyboard_flutter/emoji_keyboard_flutter.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter/services.dart';
 
 class CroniTypeForm extends StatefulWidget {
@@ -16,11 +16,13 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
   String _croniName = '';
 
   String _croniDescription = "";
+  Color _selectedColor=Colors.transparent;
 
   final Key _formKey = Key("");
 
   final TextEditingController _emojicontroller = TextEditingController();
   bool _showEmojiKeyboard = false;
+  bool _showColorPicker = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,11 +31,14 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
       ),
       body: ListView(children: [
         TextFormField(
+          readOnly: true,
           initialValue: _croniName,
           onChanged: (newValue) => _croniName = newValue,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             icon: Icon(Icons.color_lens_rounded),
             labelText: 'Color *',
+            filled: true,
+            fillColor: _selectedColor,
           ),
           onSaved: (String? value) {
             _croniName = value!;
@@ -46,12 +51,25 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
                 ? 'Do not use the @ char.'
                 : null;
           },
+          onTap: onTapColorField,
+
+        ),
+      Visibility(
+          visible: _showColorPicker,
+          child: SizedBox(
+            height: 300,
+          child: MaterialPicker(
+          pickerColor: Colors.red,
+          onColorChanged: onChangedColor
+          ),
+          ),
         ),
         TextFormField(
           //initialValue: _croniName,
           readOnly: true,
           maxLengthEnforcement: MaxLengthEnforcement.enforced,
           //maxLength: 1,
+          style: TextStyle(fontSize: 24),
           controller: _emojicontroller,
           //onChanged: (newValue) => _croniName = newValue,
           decoration: const InputDecoration(
@@ -163,7 +181,15 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
 
   void onTapEmojiField() {
     setState(() {
+      _showColorPicker=false;
       _showEmojiKeyboard = !_showEmojiKeyboard;
+    });
+  }
+
+  void onTapColorField() {
+    setState(() {
+      _showEmojiKeyboard=false;
+      _showColorPicker = !_showColorPicker;
     });
   }
 
@@ -171,10 +197,21 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
   {
     print("onChanged");
 
-     _emojicontroller.text = emoji.emoji.toString();
+    _emojicontroller.text = emoji.emoji.toString();
     setState(() {
       _showEmojiKeyboard = false;
     });
-    }
   }
+
+
+Future<void> onChangedColor(Color color) async
+{
+  print("onChanged");
+  print(color);
+  _selectedColor=color;
+  setState(() {
+    _showColorPicker = false;
+  });
+}
+}
 
