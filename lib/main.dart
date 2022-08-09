@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import 'cronibase.dart';
 import 'cronislab.dart';
 import 'cronieventform.dart';
 import 'cronitypeform.dart';
@@ -32,6 +33,10 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
   DateTime _selected_day = DateTime.now();
   List<Widget> _cronislabs = [];
 
+
+  List<CroniType> _cronitypes =[];
+  List<CroniEvent> _cronievents =[];
+
   @override
   void initState() {
     super.initState();
@@ -44,9 +49,6 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
   Widget build(BuildContext context) {
     print("build");
 
-    /* _events[DateTime(2022, 8, 3, 0)] = ["a", "aaa", "a"];
-    _events[DateTime(2022, 8, 23, 0)] = [ "aaa", "a"];
-    _events[DateTime(2022, 8, 6, 0)] = ["a"];*/
     return Scaffold(
       appBar: AppBar(
         title: Text('Croni'),
@@ -290,6 +292,12 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => CroniTypeForm()));
     print(result);
+
+    if (result == null) return;
+
+   _cronitypes.add(result[0]);
+
+    print(_cronitypes);
 
     return;
   }

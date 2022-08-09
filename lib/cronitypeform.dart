@@ -1,3 +1,4 @@
+import 'package:Croni/cronibase.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -13,10 +14,10 @@ class CroniTypeForm extends StatefulWidget {
 class _CroniTypeFormState extends State<CroniTypeForm> {
   String _croniType = "";
 
-  String _croniName = '';
-
-  String _croniDescription = "";
-  Color _selectedColor=Colors.transparent;
+  String _croniTypeName = '';
+  late Emoji _croniTypeEmoji;
+  Color _croniTypeColor=Colors.transparent;
+  String _croniTypeDescription = "";
 
   final Key _formKey = Key("");
 
@@ -32,16 +33,16 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
       body: ListView(children: [
         TextFormField(
           readOnly: true,
-          initialValue: _croniName,
-          onChanged: (newValue) => _croniName = newValue,
+          initialValue: _croniTypeName,
+          onChanged: (newValue) => _croniTypeName = newValue,
           decoration: InputDecoration(
             icon: Icon(Icons.color_lens_rounded),
-            labelText: 'Color *',
+            labelText: 'Color',
             filled: true,
-            fillColor: _selectedColor,
+            fillColor: _croniTypeColor,
           ),
           onSaved: (String? value) {
-            _croniName = value!;
+            _croniTypeName = value!;
 
             // This optional block of code can be used to run
             // code when the user saves the form.
@@ -74,10 +75,10 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
           //onChanged: (newValue) => _croniName = newValue,
           decoration: const InputDecoration(
             icon: Icon(Icons.tag_faces_rounded),
-            labelText: 'Emoji *',
+            labelText: 'Emoji',
           ),
           onSaved: (String? value) {
-            _croniName = value!;
+            _croniTypeName = value!;
 
             // This optional block of code can be used to run
             // code when the user saves the form.
@@ -130,14 +131,14 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
           ),
         ),
         TextFormField(
-          initialValue: _croniName,
-          onChanged: (newValue) => _croniName = newValue,
+          initialValue: _croniTypeName,
+          onChanged: (newValue) => _croniTypeName = newValue,
           decoration: const InputDecoration(
             icon: Icon(Icons.drive_file_rename_outline_rounded),
-            labelText: 'Name *',
+            labelText: 'Name',
           ),
           onSaved: (String? value) {
-            _croniName = value!;
+            _croniTypeName = value!;
 
             // This optional block of code can be used to run
             // code when the user saves the form.
@@ -149,14 +150,14 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
           },
         ),
         TextFormField(
-          initialValue: _croniDescription,
-          onChanged: (newValue) => _croniDescription = newValue,
+          initialValue: _croniTypeDescription,
+          onChanged: (newValue) => _croniTypeDescription = newValue,
           decoration: const InputDecoration(
             icon: Icon(Icons.textsms),
-            labelText: 'Description *',
+            labelText: 'Description',
           ),
           onSaved: (String? value) {
-            _croniDescription = value!;
+            _croniTypeDescription = value!;
             // This optional block of code can be used to run
             // code when the user saves the form.
           },
@@ -167,12 +168,7 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
           },
         ),
         ElevatedButton(
-          onPressed: () {
-            //_formKey.currentState.save();
-            setState(() {});
-            Navigator.pop(context, [_croniType, _croniName, _croniDescription]);
-            // Navigate back to first route when tapped.
-          },
+          onPressed: onPressedDone,
           child: const Text('Done!'),
         ),
       ]),
@@ -198,6 +194,7 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
     print("onChanged");
 
     _emojicontroller.text = emoji.emoji.toString();
+    _croniTypeEmoji=emoji;
     setState(() {
       _showEmojiKeyboard = false;
     });
@@ -208,10 +205,26 @@ Future<void> onChangedColor(Color color) async
 {
   print("onChanged");
   print(color);
-  _selectedColor=color;
+  _croniTypeColor=color;
   setState(() {
     _showColorPicker = false;
   });
 }
+
+  Future<void> onPressedDone() async
+  {
+    print("onPressedDone");
+
+    //TODO: Añadir comprobaciones
+
+    print(_croniTypeName);
+    print(_croniTypeEmoji);
+    print(_croniTypeColor);
+    print(_croniTypeDescription);
+    //_formKey.currentState.save();
+    setState(() {
+      Navigator.pop(context, [CroniType(name: _croniTypeName, emoji: _croniTypeEmoji, color: _croniTypeColor)]);
+    });
+  }
 }
 
