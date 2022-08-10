@@ -1,17 +1,40 @@
+import 'package:Croni/cronibase.dart';
 import 'package:flutter/material.dart';
 
-class CroniEventForm extends StatefulWidget {
-  CroniEventForm({super.key});
 
+class CroniEventResult {
+
+  CroniEventResult({
+    required this.typeId,
+    required this.name,
+    required this.description,
+  });
+
+  final int typeId;
+  final String name;
+  final String description;
+
+}
+
+class CroniEventForm extends StatefulWidget {
+  CroniEventForm({required this.croniTypesList,super.key});
+
+
+  List<String> croniTypesList=[];
   @override
-  State<CroniEventForm> createState() => _CroniEventFormState();
+  State<CroniEventForm> createState() => _CroniEventFormState(croniTypesList:croniTypesList);
 }
 
 class _CroniEventFormState extends State<CroniEventForm> {
+  _CroniEventFormState({
+    required this.croniTypesList,
+  });
+
+  List<String> croniTypesList=[];
+
+  int _croniTypeId=0;
   String _croniType="";
-
   String _croniName='';
-
   String _croniDescription="";
 
   final Key _formKey = Key("");
@@ -24,20 +47,33 @@ class _CroniEventFormState extends State<CroniEventForm> {
       ),
       body: ListView(children: [
         DropdownButtonFormField<String>(
-          value: '🏄🏽 Surf',
+          value:croniTypesList.first,
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.account_tree_sharp),
           ),
           elevation: 16,
           //style: const TextStyle(color: Colors.deepPurple),
           onChanged: (String? newValue) {
+            int id=0;
+            for(String typename in croniTypesList)
+              {
+
+                if(typename==newValue)
+                  {
+                    print(typename);
+                    print(id);
+                    _croniTypeId=id;
+                    return;
+                  }
+                id++;
+              }
             //setState();
           },
           // setState(() {
           // dropdownValue = newValue!;
           // });
           //},
-          items: <String>['🏄🏽 Surf', '📚 Books', '📽 Films']
+          items: croniTypesList
               .map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
@@ -87,7 +123,9 @@ class _CroniEventFormState extends State<CroniEventForm> {
 
             //_formKey.currentState.save();
             setState(() {});
-            Navigator.pop(context,[_croniType,_croniName,_croniDescription]);
+            Navigator.pop(context,CroniEventResult(typeId:_croniTypeId,name:_croniName,description: _croniDescription));
+            //Navigator.pop(context,[CroniEvent(type: _croniType, name: _croniName)]);
+
             // Navigate back to first route when tapped.
           },
           child: const Text('Ok'),

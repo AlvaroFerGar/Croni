@@ -1,3 +1,4 @@
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -28,19 +29,24 @@ class HomeCalendarPage extends StatefulWidget {
 class _HomeCalendarPageState extends State<HomeCalendarPage> {
   CalendarController _controller = CalendarController();
 
-  Map<DateTime, List<dynamic>> _events = {};
+  Map<DateTime, List<CroniEvent>> _eventsByDay = {};
   List<dynamic> _selectedEvents = [];
   DateTime _selected_day = DateTime.now();
   List<Widget> _cronislabs = [];
 
+  List<CroniType> _cronitypes = [];
+  List<String> _cronitypesFullnames = [];
 
-  List<CroniType> _cronitypes =[];
-  List<CroniEvent> _cronievents =[];
+  List<CroniEvent> _cronievents = [];
 
   @override
   void initState() {
     super.initState();
 
+    _cronitypes.add(CroniType(
+        name: "Surf",
+        emoji: Emoji("Water Wave", "🏄🏽"),
+        color: Colors.blueAccent));
     print("initState");
     //_controller = CalendarController();
   }
@@ -114,7 +120,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           TableCalendar(
-            events: _events,
+            events: _eventsByDay,
             initialCalendarFormat: CalendarFormat.month,
             calendarStyle: CalendarStyle(
                 canEventMarkersOverflow: false,
@@ -151,6 +157,10 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                     scrollDirection: Axis.vertical,
                     itemCount: events.length,
                     itemBuilder: (context, int index) {
+                      //print("index");
+                      //print(index);
+                      List<CroniEvent> eventsInDay=_getEventsForDay(date);
+                      //print(eventsInDay);
                       if (index == null) return Container();
                       return Container(
                         margin: const EdgeInsets.only(top: 1),
@@ -160,7 +170,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                           width: 35,
                           decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
-                              color: Colors.blue,
+                              color: eventsInDay[index].type.color,
                               backgroundBlendMode: BlendMode.darken),
                         ),
                       );
@@ -236,19 +246,6 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     );
   }
 
-  Widget _buildEventsMarker(DateTime date, List events) {
-    return Container(
-      //Ojo. No se usa
-      //TODO Crear una clase aparte como con los slabs
-      width: 25.0,
-      height: 2.5,
-      decoration: const BoxDecoration(
-        color: Colors.blue,
-        shape: BoxShape.rectangle,
-        borderRadius: null,
-      ),
-    );
-  }
 
   Future<void> _onClearAllEvents(BuildContext context) async {
     print("pressed clear");
@@ -258,7 +255,9 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
       child: Text("Kill them!"),
       onPressed: () {
         print("killing events");
-        _events.clear();
+        _cronievents.clear();
+        _eventsByDay.clear();
+        _onUpdateCroniSlabs(context);
         Navigator.pop(context);
       },
     );
@@ -286,7 +285,6 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     setState(() {});
   }
 
-
   Future<void> _onPressedNewCroniType(BuildContext context) async {
     print("_onPressedNewCroniEvent  " + _selected_day.toString());
     final result = await Navigator.push(
@@ -295,7 +293,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
     if (result == null) return;
 
-   _cronitypes.add(result[0]);
+    _cronitypes.add(result[0]);
 
     print(_cronitypes);
 
@@ -304,14 +302,21 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
   Future<void> _onPressedNewCroniEvent(BuildContext context) async {
     print("_onPressedNewCroniEvent  " + _selected_day.toString());
-    final result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => CroniEventForm()));
-    print(result);
+    List<String> cronitypenames=[];
+    for (CroniType type in _cronitypes)
+    {
+      cronitypenames.add(type.emoji.emoji.toString()+" "+type.name);
+    }
+    //print(cronitypenames);
+    final CroniEventResult result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => CroniEventForm(croniTypesList: cronitypenames,)));
+    //print(result);
 
     if (result == null) return;
 
-    if (_events[_selected_day] != null) _events[_selected_day]?.add(result[1]);
-    if (_events[_selected_day] == null) _events[_selected_day] = [result[1]];
+    CroniEvent croni=CroniEvent(type: _cronitypes[result.typeId], name: result.name, startDate: _selected_day, endDate: _selected_day);
+    if (_eventsByDay[_selected_day] != null) _eventsByDay[_selected_day]?.add(croni);
+    if (_eventsByDay[_selected_day] == null) _eventsByDay[_selected_day] = [croni];
 
     _onUpdateCroniSlabs(context);
 
@@ -320,26 +325,26 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
   void _onUpdateCroniSlabs(BuildContext context) {
     _cronislabs.clear();
-    print("eventos en el dia seleccionado " + _selected_day.toString());
-    print(_getEventsForDay(_selected_day));
-    for (String event in _getEventsForDay(_selected_day)) {
-      print("eventos en el dia seleccionado");
+    //print("eventos en el dia seleccionado " + _selected_day.toString());
+    //print(_getEventsForDay(_selected_day));
+    for (CroniEvent event in _getEventsForDay(_selected_day)) {
+      //print("eventos en el dia seleccionado");
 
       _cronislabs.add(Padding(
           padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
           child: CroniSlabStatelessWidget(
-              bckgcolor: Colors.blueAccent,
-              eventName: event,
-              eventTypeName: "Surf",
-              emoji: "🏄🏽")));
+              bckgcolor: event.type.color,
+              eventName: event.name,
+              eventTypeName:event.type.name,
+              emoji: event.type.emoji.emoji.toString())));
     }
     setState(() {});
   }
 
-  List<dynamic> _getEventsForDay(DateTime day) {
-    print("_getEventsForDay");
-    print(_events[day]);
-    print("_getEventsForDay");
-    return _events[day] ?? [];
+  List<CroniEvent> _getEventsForDay(DateTime day) {
+    //print("_getEventsForDay");
+    //print(_eventsByDay[day]);
+    //print("_getEventsForDay");
+    return _eventsByDay[day] ?? [];
   }
 }
