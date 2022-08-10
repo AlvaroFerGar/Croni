@@ -85,7 +85,29 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
               label: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Create new Crony type",
+                  "Create new Croni type",
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ),
+            TextButton.icon(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent)),
+              onPressed: () => {
+                //TODO. Pasar a un formulario que permita editar/eliminar/ver los tipos
+              },
+              icon: Icon(
+                Icons.manage_history_rounded,
+                size: 16.0,
+              ),
+              label: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Manage Croni types",
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                   ),
@@ -159,7 +181,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
                     itemBuilder: (context, int index) {
                       //print("index");
                       //print(index);
-                      List<CroniEvent> eventsInDay=_getEventsForDay(date);
+                      List<CroniEvent> eventsInDay = _getEventsForDay(date);
                       //print(eventsInDay);
                       if (index == null) return Container();
                       return Container(
@@ -246,7 +268,6 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
     );
   }
 
-
   Future<void> _onClearAllEvents(BuildContext context) async {
     print("pressed clear");
 
@@ -302,21 +323,30 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
 
   Future<void> _onPressedNewCroniEvent(BuildContext context) async {
     print("_onPressedNewCroniEvent  " + _selected_day.toString());
-    List<String> cronitypenames=[];
-    for (CroniType type in _cronitypes)
-    {
-      cronitypenames.add(type.emoji.emoji.toString()+" "+type.name);
+    List<String> cronitypenames = [];
+    for (CroniType type in _cronitypes) {
+      cronitypenames.add(type.emoji.emoji.toString() + " " + type.name);
     }
     //print(cronitypenames);
     final CroniEventResult result = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => CroniEventForm(croniTypesList: cronitypenames,)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => CroniEventForm(
+                  croniTypesList: cronitypenames,
+                )));
     //print(result);
 
     if (result == null) return;
 
-    CroniEvent croni=CroniEvent(type: _cronitypes[result.typeId], name: result.name, startDate: _selected_day, endDate: _selected_day);
-    if (_eventsByDay[_selected_day] != null) _eventsByDay[_selected_day]?.add(croni);
-    if (_eventsByDay[_selected_day] == null) _eventsByDay[_selected_day] = [croni];
+    CroniEvent croni = CroniEvent(
+        type: _cronitypes[result.typeId],
+        name: result.name,
+        startDate: _selected_day,
+        endDate: _selected_day);
+    if (_eventsByDay[_selected_day] != null)
+      _eventsByDay[_selected_day]?.add(croni);
+    if (_eventsByDay[_selected_day] == null)
+      _eventsByDay[_selected_day] = [croni];
 
     _onUpdateCroniSlabs(context);
 
@@ -335,7 +365,7 @@ class _HomeCalendarPageState extends State<HomeCalendarPage> {
           child: CroniSlabStatelessWidget(
               bckgcolor: event.type.color,
               eventName: event.name,
-              eventTypeName:event.type.name,
+              eventTypeName: event.type.name,
               emoji: event.type.emoji.emoji.toString())));
     }
     setState(() {});

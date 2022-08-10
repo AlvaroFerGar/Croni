@@ -58,10 +58,12 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
       Visibility(
           visible: _showColorPicker,
           child: SizedBox(
-            height: 300,
+            height: 400,
           child: MaterialPicker(
           pickerColor: Colors.red,
-          onColorChanged: onChangedColor
+          onColorChanged: onChangedColor,
+            enableLabel: false,
+            portraitOnly: false,
           ),
           ),
         ),
@@ -90,14 +92,6 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
           },
           onTap: onTapEmojiField,
         ),
-        /*Align(
-            child:EmojiKeyboard(
-                emotionController: _emojicontroller,
-                emojiKeyboardHeight: 200,
-                showEmojiKeyboard: _showEmojiKeyboard,
-                darkMode: false,
-            ),),
-        */
         Visibility(
           visible: _showEmojiKeyboard,
           child: Align(
