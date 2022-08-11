@@ -37,11 +37,14 @@ class _CroniEventFormState extends State<CroniEventForm> {
   String _croniName='';
   String _croniDescription="";
 
-  final Key _formKey = Key("");
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Form(
+        key: _formKey,
+        child:Scaffold(
+
       appBar: AppBar(
         title: const Text('New Croni Event!'),
       ),
@@ -94,10 +97,11 @@ class _CroniEventFormState extends State<CroniEventForm> {
             // This optional block of code can be used to run
             // code when the user saves the form.
           },
-          validator: (String? value) {
-            return (value != null && value.contains('@'))
-                ? 'Do not use the @ char.'
-                : null;
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
           },
         ),
         TextFormField(
@@ -112,18 +116,26 @@ class _CroniEventFormState extends State<CroniEventForm> {
             // This optional block of code can be used to run
             // code when the user saves the form.
           },
+          /*
           validator: (String? value) {
+
             return (value != null && value.contains('@'))
                 ? 'Do not use the @ char.'
                 : null;
           },
+          */
         ),
         ElevatedButton(
           onPressed: () {
+            print("onpressed");
 
-            //_formKey.currentState.save();
-            setState(() {});
-            Navigator.pop(context,CroniEventResult(typeId:_croniTypeId,name:_croniName,description: _croniDescription));
+            if (_formKey.currentState!.validate()) {
+              setState(() {});
+              Navigator.pop(context,CroniEventResult(typeId:_croniTypeId,name:_croniName,description: _croniDescription));
+              return;
+            }
+            print("no validado");
+;
             //Navigator.pop(context,[CroniEvent(type: _croniType, name: _croniName)]);
 
             // Navigate back to first route when tapped.
@@ -131,6 +143,7 @@ class _CroniEventFormState extends State<CroniEventForm> {
           child: const Text('Ok'),
         ),
       ]),
+    ),
     );
   }
 }
