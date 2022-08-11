@@ -16,209 +16,213 @@ class _CroniTypeFormState extends State<CroniTypeForm> {
 
   String _croniTypeName = '';
   late Emoji _croniTypeEmoji;
-  Color _croniTypeColor=Colors.transparent;
+  Color _croniTypeColor = Colors.transparent;
   String _croniTypeDescription = "";
 
-  final Key _formKey = Key("");
+  final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emojicontroller = TextEditingController();
   bool _showEmojiKeyboard = false;
   bool _showColorPicker = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Croni Type!'),
-      ),
-      body: ListView(children: [
-        TextFormField(
-          readOnly: true,
-          initialValue: _croniTypeName,
-          onChanged: (newValue) => _croniTypeName = newValue,
-          decoration: InputDecoration(
-            icon: Icon(Icons.color_lens_rounded),
-            labelText: 'Color',
-            filled: true,
-            fillColor: _croniTypeColor,
-          ),
-          onSaved: (String? value) {
-            _croniTypeName = value!;
-
-            // This optional block of code can be used to run
-            // code when the user saves the form.
-          },
-          validator: (String? value) {
-            return (value != null && value.contains('@'))
-                ? 'Do not use the @ char.'
-                : null;
-          },
-          onTap: onTapColorField,
-
+    return Form(
+      key: _formKey,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('New Croni Type!'),
         ),
-      Visibility(
-          visible: _showColorPicker,
-          child: SizedBox(
-            height: 400,
-          child: MaterialPicker(
-          pickerColor: Colors.red,
-          onColorChanged: onChangedColor,
-            enableLabel: false,
-            portraitOnly: false,
-          ),
-          ),
-        ),
-        TextFormField(
-          //initialValue: _croniName,
-          readOnly: true,
-          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-          //maxLength: 1,
-          style: TextStyle(fontSize: 24),
-          controller: _emojicontroller,
-          //onChanged: (newValue) => _croniName = newValue,
-          decoration: const InputDecoration(
-            icon: Icon(Icons.tag_faces_rounded),
-            labelText: 'Emoji',
-          ),
-          onSaved: (String? value) {
-            _croniTypeName = value!;
+        body: ListView(children: [
+          TextFormField(
+            readOnly: true,
+            initialValue: _croniTypeName,
+            onChanged: (newValue) => _croniTypeName = newValue,
+            decoration: InputDecoration(
+              icon: Icon(Icons.color_lens_rounded),
+              labelText: 'Color',
+              filled: true,
+              fillColor: _croniTypeColor,
+            ),
+            onSaved: (String? value) {
+              _croniTypeName = value!;
 
-            // This optional block of code can be used to run
-            // code when the user saves the form.
-          },
-          validator: (String? value) {
-            return (value != null && value.contains('@'))
-                ? 'Do not use the @ char.'
-                : null;
-          },
-          onTap: onTapEmojiField,
-        ),
-        Visibility(
-          visible: _showEmojiKeyboard,
-          child: Align(
+              // This optional block of code can be used to run
+              // code when the user saves the form.
+            },
+
+            validator: (String? value) {
+              return (_croniTypeColor==const Color(0x00000000))
+                  ? 'Please, pick a color'
+                  : null;
+            },
+            onTap: onTapColorField,
+          ),
+          Visibility(
+            visible: _showColorPicker,
             child: SizedBox(
-              height: 300,
-              child: EmojiPicker(
-                textEditingController: _emojicontroller,
-                config: Config(
-                  columns: 7,
-                  verticalSpacing: 0,
-                  horizontalSpacing: 0,
-                  gridPadding: EdgeInsets.zero,
-                  initCategory: Category.RECENT,
-                  bgColor: Color(0xFFF2F2F2),
-                  indicatorColor: Colors.blue,
-                  iconColor: Colors.grey,
-                  iconColorSelected: Colors.blue,
-                  progressIndicatorColor: Colors.blue,
-                  backspaceColor: Colors.blue,
-                  skinToneDialogBgColor: Colors.white,
-                  skinToneIndicatorColor: Colors.grey,
-                  enableSkinTones: true,
-                  showRecentsTab: false,
-                  tabIndicatorAnimDuration: kTabScrollDuration,
-                  categoryIcons: const CategoryIcons(),
-                  buttonMode: ButtonMode.MATERIAL,
-                ),
-                onEmojiSelected: onChangedEmojiField,
+              height: 400,
+              child: BlockPicker(
+                pickerColor: Colors.red,
+                onColorChanged: onChangedColor,
+                //enableLabel: false,
+                //portraitOnly: false,
               ),
             ),
           ),
-        ),
-        TextFormField(
-          initialValue: _croniTypeName,
-          onChanged: (newValue) => _croniTypeName = newValue,
-          decoration: const InputDecoration(
-            icon: Icon(Icons.drive_file_rename_outline_rounded),
-            labelText: 'Name',
-          ),
-          onSaved: (String? value) {
-            _croniTypeName = value!;
+          TextFormField(
+            //initialValue: _croniName,
+            readOnly: true,
+            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+            //maxLength: 1,
+            style: TextStyle(fontSize: 24),
+            controller: _emojicontroller,
+            //onChanged: (newValue) => _croniName = newValue,
+            decoration: const InputDecoration(
+              icon: Icon(Icons.tag_faces_rounded),
+              labelText: 'Emoji',
+            ),
+            onSaved: (String? value) {
+              _croniTypeName = value!;
 
-            // This optional block of code can be used to run
-            // code when the user saves the form.
-          },
-          validator: (String? value) {
-            return (value != null && value.contains('@'))
-                ? 'Do not use the @ char.'
-                : null;
-          },
-        ),
-        TextFormField(
-          initialValue: _croniTypeDescription,
-          onChanged: (newValue) => _croniTypeDescription = newValue,
-          decoration: const InputDecoration(
-            icon: Icon(Icons.textsms),
-            labelText: 'Description',
+              // This optional block of code can be used to run
+              // code when the user saves the form.
+            },
+            validator: (String? value) {
+              return (_emojicontroller.text.isEmpty)
+                  ? 'Please, select an emoji'
+                  : null;
+            },
+            onTap: onTapEmojiField,
           ),
-          onSaved: (String? value) {
-            _croniTypeDescription = value!;
-            // This optional block of code can be used to run
-            // code when the user saves the form.
-          },
-          validator: (String? value) {
-            return (value != null && value.contains('@'))
-                ? 'Do not use the @ char.'
-                : null;
-          },
-        ),
-        ElevatedButton(
-          onPressed: onPressedDone,
-          child: const Text('Done!'),
-        ),
-      ]),
+          Visibility(
+            visible: _showEmojiKeyboard,
+            child: Align(
+              child: SizedBox(
+                height: 300,
+                child: EmojiPicker(
+                  textEditingController: _emojicontroller,
+                  config: Config(
+                    columns: 7,
+                    verticalSpacing: 0,
+                    horizontalSpacing: 0,
+                    gridPadding: EdgeInsets.zero,
+                    initCategory: Category.RECENT,
+                    bgColor: Color(0xFFF2F2F2),
+                    indicatorColor: Colors.blue,
+                    iconColor: Colors.grey,
+                    iconColorSelected: Colors.blue,
+                    progressIndicatorColor: Colors.blue,
+                    backspaceColor: Colors.blue,
+                    skinToneDialogBgColor: Colors.white,
+                    skinToneIndicatorColor: Colors.grey,
+                    enableSkinTones: true,
+                    showRecentsTab: false,
+                    tabIndicatorAnimDuration: kTabScrollDuration,
+                    categoryIcons: const CategoryIcons(),
+                    buttonMode: ButtonMode.MATERIAL,
+                  ),
+                  onEmojiSelected: onChangedEmojiField,
+                ),
+              ),
+            ),
+          ),
+          TextFormField(
+            initialValue: _croniTypeName,
+            onChanged: (newValue) => _croniTypeName = newValue,
+            decoration: const InputDecoration(
+              icon: Icon(Icons.drive_file_rename_outline_rounded),
+              labelText: 'Name',
+            ),
+            onSaved: (String? value) {
+              _croniTypeName = value!;
+
+              // This optional block of code can be used to run
+              // code when the user saves the form.
+            },
+            validator: (String? value) {
+              return (_croniTypeName.isEmpty)
+                  ? 'Please, enter a name'
+                  : null;
+            },
+          ),
+          TextFormField(
+            initialValue: _croniTypeDescription,
+            onChanged: (newValue) => _croniTypeDescription = newValue,
+            decoration: const InputDecoration(
+              icon: Icon(Icons.textsms),
+              labelText: 'Description',
+            ),
+            onSaved: (String? value) {
+              _croniTypeDescription = value!;
+              // This optional block of code can be used to run
+              // code when the user saves the form.
+            },
+            validator: (String? value) {
+              return (value != null && value.contains('@'))
+                  ? 'Do not use the @ char.'
+                  : null;
+            },
+          ),
+          ElevatedButton(
+            onPressed: onPressedDone,
+            child: const Text('Done!'),
+          ),
+        ]),
+      ),
     );
   }
 
   void onTapEmojiField() {
     setState(() {
-      _showColorPicker=false;
+      _showColorPicker = false;
       _showEmojiKeyboard = !_showEmojiKeyboard;
     });
   }
 
   void onTapColorField() {
     setState(() {
-      _showEmojiKeyboard=false;
+      _showEmojiKeyboard = false;
       _showColorPicker = !_showColorPicker;
     });
   }
 
-  Future<void> onChangedEmojiField(category, Emoji emoji) async
-  {
+  Future<void> onChangedEmojiField(category, Emoji emoji) async {
     print("onChanged");
 
     _emojicontroller.text = emoji.emoji.toString();
-    _croniTypeEmoji=emoji;
+    _croniTypeEmoji = emoji;
     setState(() {
       _showEmojiKeyboard = false;
     });
   }
 
-
-Future<void> onChangedColor(Color color) async
-{
-  print("onChanged");
-  print(color);
-  _croniTypeColor=color;
-  setState(() {
-    _showColorPicker = false;
-  });
-}
-
-  Future<void> onPressedDone() async
-  {
-    print("onPressedDone");
-
-    //TODO: Añadir comprobaciones
-
-    print(_croniTypeName);
-    print(_croniTypeEmoji);
-    print(_croniTypeColor);
-    print(_croniTypeDescription);
-    //_formKey.currentState.save();
+  Future<void> onChangedColor(Color color) async {
+    print("onChanged");
+    print(color);
+    _croniTypeColor = color;
     setState(() {
-      Navigator.pop(context, [CroniType(name: _croniTypeName, emoji: _croniTypeEmoji, color: _croniTypeColor)]);
+      _showColorPicker = false;
     });
   }
-}
 
+  Future<void> onPressedDone() async {
+    print("onPressedDone");
+
+    print(_croniTypeName);
+    print(_emojicontroller.text);
+    print(_croniTypeColor);
+    print(_croniTypeDescription);
+
+    if (_formKey.currentState!.validate())
+    {
+      setState(() {
+        Navigator.pop(context, [
+          CroniType(
+              name: _croniTypeName,
+              emoji: _croniTypeEmoji,
+              color: _croniTypeColor)
+        ]);
+      });
+    }
+  }
+}
